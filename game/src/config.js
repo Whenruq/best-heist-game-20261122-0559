@@ -1,16 +1,17 @@
-// Every tuning number and colour in one place. The playfield is a fixed 1280x720 logical
-// bank floor; the renderer scales it to the window, so no rule below depends on screen size.
+// Vault Job's tuning sheet: every number and colour the game uses lives here, so the
+// rest of the code reads as rules rather than arithmetic. The bank floor is a fixed
+// 1280x720 logical field; the renderer letterboxes it to whatever window it gets.
 
 export const FIELD = { width: 1280, height: 720 };
 
-/** The simulation's fixed step, in seconds: 60 updates a second whatever the display's rate. */
+/** Fixed simulation step in seconds: 60 updates a second, whatever the display rate. */
 export const STEP = 1 / 60;
 
 export const PLAYER = {
   radius: 14,
   speed: 190,
   sneakSpeed: 108,
-  /** Each gold bar carried slows the thief by this fraction: heavy loot, careful feet. */
+  /** Each gold bar on board slows the thief by this fraction. Heavy loot, slow feet. */
   carrySlowPerBar: 0.15,
 };
 
@@ -19,11 +20,11 @@ export const GUARD = {
   speed: 96,
   investigateSpeed: 132,
   sightRange: 215,
-  /** Half the vision cone's width, in radians (about 36 degrees each way). */
+  /** Half-width of the vision cone in radians (roughly 36 degrees each way). */
   sightHalfAngle: 0.63,
-  /** A running (non-sneaking) thief inside this range is heard, even behind the guard. */
+  /** A thief moving at full pace inside this range is heard, even from behind. */
   hearingRange: 98,
-  /** A guard this close grabs the thief on the spot. */
+  /** A guard this close simply grabs the thief. */
   catchRange: 31,
   turnRate: 5.2,
 };
@@ -31,7 +32,7 @@ export const GUARD = {
 export const CAMERA = {
   sightRange: 245,
   sightHalfAngle: 0.5,
-  /** How fast the sweep oscillates, and how far each way from its base angle. */
+  /** The sweep: how fast the cone oscillates and how far it swings from its base angle. */
   sweepSpeed: 0.5,
   sweepArc: 0.8,
   disabledSeconds: 6,
@@ -39,11 +40,11 @@ export const CAMERA = {
 
 export const ALARM = {
   max: 100,
-  /** Alarm points per second while a guard (or camera) has the thief in view, before distance scaling. */
+  /** Points per second while in view, before the distance scaling in alarm.js. */
   guardRate: 54,
   cameraRate: 40,
   noiseRate: 14,
-  /** Alarm points per second drained while nobody can see or hear the thief. */
+  /** Points per second drained while nobody can see or hear the thief. */
   decay: 9,
   /** Sneaking multiplies every detection rate by this. */
   sneakFactor: 0.45,
@@ -51,12 +52,12 @@ export const ALARM = {
 
 export const TOOLS = {
   empCharges: 2,
-  /** An EMP charge fries the nearest camera within this range of the thief. */
+  /** An EMP charge fries the nearest live camera within this range of the thief. */
   empRange: 285,
   decoyCharges: 3,
-  /** A decoy coin can be tossed at most this far from the thief. */
+  /** A decoy coin can be tossed at most this far. */
   decoyRange: 345,
-  /** The nearest guard within this range of the coin goes to look at it. */
+  /** The nearest guard within this range of the coin walks over to investigate. */
   decoyHearRange: 470,
   investigateSeconds: 2.6,
   coinLifetime: 7,
@@ -64,8 +65,11 @@ export const TOOLS = {
 
 export const GOLD = { radius: 13, points: 1000 };
 
-/** The HUD bar drawn across the top of the field, in logical pixels. */
+/** Height of the HUD bar across the top of the field, in logical pixels. */
 export const HUD = { height: 52 };
+
+/** How many rays shape each vision cone when it is drawn (more = smoother edges). */
+export const CONE_RAYS = 22;
 
 export const SCORE = {
   timeBonusPerSecond: 10,
@@ -108,5 +112,5 @@ export const PALETTE = {
 
 export const FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif';
 
-/** Where the best score is kept between visits (this browser only). */
+/** localStorage key for the best score (this browser only). */
 export const BEST_KEY = 'vault-job.best';

@@ -37,3 +37,5 @@ writeFileSync(
     game_path_max_bytes: 1000,
   }),
 );
+
+console.log(`Vault Job entry written to ${out}`);

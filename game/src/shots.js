@@ -18,12 +18,17 @@ function run(world, seconds, input) {
   for (let i = 0; i < steps; i += 1) world.step(STEP, input);
 }
 
+/** Walk the thief in one direction for a few seconds of staged time. */
+function walk(world, seconds, dx, dy) {
+  run(world, seconds, { ...IDLE, dx, dy });
+}
+
 function stageStart(world) {
   world.reset();
   // Walk the thief into the lobby and up behind the first counter, guards mid-patrol.
-  run(world, 1.7, { ...IDLE, dx: 1 });
-  run(world, 1.9, { ...IDLE, dy: -1 });
-  run(world, 1.1, { ...IDLE, dx: 1 });
+  walk(world, 1.7, 1, 0);
+  walk(world, 1.9, 0, -1);
+  walk(world, 1.1, 1, 0);
   run(world, 0.4, IDLE);
   world.state.alarm = 34;
   return { screen: SCREEN_PLAY, best: 0 };

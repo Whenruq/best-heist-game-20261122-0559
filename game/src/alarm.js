@@ -2,7 +2,7 @@
 // (faster up close), running near a guard fills it a little, and staying out of sight
 // drains it. A full meter — or a guard's hand on the thief's collar — ends the run.
 import { ALARM, CAMERA, GUARD } from './config.js';
-import { distance } from './geometry.js';
+import { clamp, distance } from './geometry.js';
 import { guardSeesPlayer } from './guards.js';
 import { cameraSeesPlayer } from './cameras.js';
 import { EVENT_CAUGHT, EVENT_NONE } from './world.js';
@@ -52,7 +52,7 @@ export function updateAlarm(state, dt) {
   } else {
     state.alarm -= ALARM.decay * dt;
   }
-  state.alarm = Math.max(0, Math.min(ALARM.max, state.alarm));
+  state.alarm = clamp(state.alarm, 0, ALARM.max);
 
   if (state.alarm >= ALARM.max) {
     state.status = 'caught';

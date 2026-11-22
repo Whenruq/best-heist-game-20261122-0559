@@ -1,6 +1,6 @@
-// Keyboard and mouse, translated into the game's terms: a movement direction, a sneak
-// flag, one-shot actions (confirm, pause, EMP, decoy) and the mouse position in logical
-// field coordinates for aiming a decoy toss or clicking a camera to fry it.
+// Keyboard and mouse, translated into game terms: a movement direction, a sneak flag,
+// one-shot action bits (confirm, pause, EMP, decoy), and the pointer position in
+// logical field coordinates for aiming decoy tosses and clicking cameras.
 import { FIELD } from './config.js';
 
 export const ACTION_CONFIRM = 1;
@@ -25,6 +25,7 @@ export function createInput(canvas) {
   let click = null;
   const mouse = { x: FIELD.width / 2, y: FIELD.height / 2 };
 
+  // Screen pixels to logical field coordinates, undoing the renderer's letterbox.
   function toLogical(event) {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.min(rect.width / FIELD.width, rect.height / FIELD.height);
@@ -37,13 +38,20 @@ export function createInput(canvas) {
   }
 
   window.addEventListener('keydown', (event) => {
+    // Browser shortcuts (Ctrl/Cmd combos) are not game input.
+    if (event.ctrlKey || event.metaKey) return;
     if (KEY_DIRECTIONS[event.code] || event.code === 'Space') event.preventDefault();
     if (event.repeat) return;
     held.add(event.code);
-    if (event.code === 'Space' || event.code === 'Enter' || event.code === 'NumpadEnter') actions |= ACTION_CONFIRM;
-    else if (event.code === 'KeyP' || event.code === 'Escape') actions |= ACTION_PAUSE;
-    else if (event.code === 'KeyE') actions |= ACTION_EMP;
-    else if (event.code === 'KeyQ') actions |= ACTION_DECOY;
+    if (event.code === 'Space' || event.code === 'Enter' || event.code === 'NumpadEnter') {
+      actions |= ACTION_CONFIRM;
+    } else if (event.code === 'KeyP' || event.code === 'Escape') {
+      actions |= ACTION_PAUSE;
+    } else if (event.code === 'KeyE') {
+      actions |= ACTION_EMP;
+    } else if (event.code === 'KeyQ') {
+      actions |= ACTION_DECOY;
+    }
   });
   window.addEventListener('keyup', (event) => held.delete(event.code));
   window.addEventListener('blur', () => held.clear());
@@ -62,7 +70,7 @@ export function createInput(canvas) {
   });
 
   return {
-    /** The held movement direction as {dx, dy}, each in [-1, 1], not normalised. */
+    /** Held movement direction as {dx, dy}, each in [-1, 1], not normalised. */
     direction() {
       let dx = 0;
       let dy = 0;
@@ -81,13 +89,13 @@ export function createInput(canvas) {
     mouse() {
       return mouse;
     },
-    /** The one-shot actions pressed since the last call, as a bitmask; clears them. */
+    /** One-shot actions pressed since the last call, as a bitmask; clears them. */
     takeActions() {
       const taken = actions;
       actions = 0;
       return taken;
     },
-    /** The last click in logical coordinates since the last call, or null; clears it. */
+    /** Last click in logical coordinates since the last call, or null; clears it. */
     takeClick() {
       const taken = click;
       click = null;

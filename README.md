@@ -22,7 +22,8 @@ The three screenshots in `screenshots/` are real renders of the game (the first 
 
 Guards see in cones and hear running feet; cameras sweep. Being seen fills the alarm,
 breaking line of sight drains it. At 100% — or if a guard lays a hand on you — the job
-is over. Score is gold, a time bonus, and points for tools you never spent.
+is over. Score is gold (1000 a bar), a time bonus for a fast job, and 150 points for
+every tool charge you never spent.
 
 ## Run it
 

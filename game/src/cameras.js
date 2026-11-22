@@ -1,9 +1,14 @@
 // The security cameras: fixed mounts whose cones sweep back and forth on a sine. An EMP
-// charge freezes a camera (grey cone, no detection) for a few seconds; the sweep resumes
-// from the same clock, so a disabled camera never drifts out of sync with the others.
+// charge freezes a camera (grey cone, no detection) for a few seconds; the sweep runs
+// off the world clock, so a disabled camera resumes in sync with the others.
 import { CAMERA } from './config.js';
 import { pointInCone } from './geometry.js';
 import { SOLIDS } from './world.js';
+
+/** Where a live camera's cone points at world time `time`. */
+export function sweepAngle(camera, time) {
+  return camera.baseAngle + Math.sin(time * CAMERA.sweepSpeed + camera.phase) * CAMERA.sweepArc;
+}
 
 export function updateCameras(state, dt) {
   for (let i = 0; i < state.cameras.length; i += 1) {
@@ -12,7 +17,7 @@ export function updateCameras(state, dt) {
       camera.disabled = Math.max(0, camera.disabled - dt);
       continue;
     }
-    camera.angle = camera.baseAngle + Math.sin(state.time * CAMERA.sweepSpeed + camera.phase) * CAMERA.sweepArc;
+    camera.angle = sweepAngle(camera, state.time);
   }
 }
 

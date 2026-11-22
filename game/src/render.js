@@ -1,7 +1,7 @@
 // Everything the player sees: the bank floor, vision cones clipped by walls, the thief,
 // guards and cameras, the gold, the HUD with its alarm meter, and the title / pause /
 // getaway / busted overlays. The logical 1280x720 field is letterboxed to the window.
-import { ALARM, CAMERA, FIELD, FONT, GOLD, GUARD, HUD, PALETTE } from './config.js';
+import { ALARM, CAMERA, CONE_RAYS, FIELD, FONT, GOLD, GUARD, HUD, PALETTE } from './config.js';
 import { raycastDistance } from './geometry.js';
 import { COUNTERS, PLANTS, SOLIDS, VAN_ZONE, VAULT_FLOOR, WALLS } from './world.js';
 import { guardSeesPlayer } from './guards.js';
@@ -13,7 +13,6 @@ export const SCREEN_PAUSED = 2;
 export const SCREEN_WIN = 3;
 export const SCREEN_OVER = 4;
 
-const CONE_RAYS = 22;
 const TILE = 40;
 
 export function createRenderer(canvas) {
@@ -127,6 +126,13 @@ export function createRenderer(canvas) {
     ctx.stroke();
   }
 
+  function drawAlert(x, y) {
+    ctx.fillStyle = PALETTE.alarmHigh;
+    ctx.font = `900 20px ${FONT}`;
+    ctx.textAlign = 'center';
+    ctx.fillText('!', x, y);
+  }
+
   function drawCamera(camera, sees) {
     ctx.save();
     ctx.translate(camera.x, camera.y);
@@ -139,6 +145,7 @@ export function createRenderer(canvas) {
     ctx.fill();
     ctx.restore();
     if (camera.disabled > 0) {
+      // A little spark zigzag: this camera is fried.
       ctx.strokeStyle = '#ffd166';
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -172,13 +179,6 @@ export function createRenderer(canvas) {
     );
     ctx.fill();
     if (sees) drawAlert(guard.x, guard.y - GUARD.radius - 12);
-  }
-
-  function drawAlert(x, y) {
-    ctx.fillStyle = PALETTE.alarmHigh;
-    ctx.font = `900 20px ${FONT}`;
-    ctx.textAlign = 'center';
-    ctx.fillText('!', x, y);
   }
 
   function drawPlayer(player) {

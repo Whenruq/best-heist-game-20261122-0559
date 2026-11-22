@@ -1,5 +1,6 @@
-// A tiny seeded random generator (mulberry32): the same seed always deals the same
-// decoration jitter and gold glint phases, so a screenshot scene is reproducible.
+// Seeded randomness (mulberry32). The same seed always produces the same stream, so
+// decoration jitter and gold glint phases repeat exactly — screenshot scenes staged
+// with a fixed seed are reproducible frame for frame.
 
 export function createRandom(seed) {
   let state = seed >>> 0;
@@ -12,12 +13,17 @@ export function createRandom(seed) {
   };
 }
 
-/** A random float in [min, max) from the seeded generator. */
+/** A float in [min, max) drawn from the seeded generator. */
 export function range(random, min, max) {
   return min + random() * (max - min);
 }
 
-/** A random integer in [min, max] inclusive, from the seeded generator. */
+/** An integer in [min, max], both ends included. */
 export function intRange(random, min, max) {
   return min + Math.floor(random() * (max - min + 1));
+}
+
+/** One element of a non-empty array, chosen by the seeded generator. */
+export function pick(random, items) {
+  return items[Math.floor(random() * items.length)];
 }

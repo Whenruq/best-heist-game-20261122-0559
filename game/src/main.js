@@ -15,6 +15,8 @@ import { stageShot } from './shots.js';
 const MAX_FRAME = 0.25;
 /** Clicking this close to a camera (logical pixels) fries it instead of tossing a decoy. */
 const CAMERA_CLICK_RANGE = 46;
+/** The input that holds the thief still (title screen, staged scenes). */
+const IDLE_INPUT = { dx: 0, dy: 0, sneak: false, emp: false, decoy: null };
 
 const params = new URLSearchParams(window.location.search);
 const shot = params.get('shot');
@@ -126,7 +128,8 @@ function runGame() {
 
   function step() {
     if (screen === SCREEN_TITLE) {
-      world.step(STEP, { dx: 0, dy: 0, sneak: false, emp: false, decoy: null });
+      // Guards patrol behind the title panel; the thief waits at the van.
+      world.step(STEP, IDLE_INPUT);
       return;
     }
     const dir = input.direction();

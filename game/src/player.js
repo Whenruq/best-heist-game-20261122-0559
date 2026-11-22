@@ -8,7 +8,7 @@ import { SOLIDS } from './world.js';
 const BOUNDS = { minX: 20, minY: 20, maxX: FIELD.width - 20, maxY: FIELD.height - 20 };
 
 /** The thief's current top speed: sneak pace or run pace, minus the weight of the loot. */
-function playerSpeed(player) {
+export function playerSpeed(player) {
   const base = player.sneaking ? PLAYER.sneakSpeed : PLAYER.speed;
   return base * (1 - PLAYER.carrySlowPerBar * player.gold);
 }

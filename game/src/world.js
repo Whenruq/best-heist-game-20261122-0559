@@ -1,9 +1,9 @@
-// The bank floor and the one simulation step. The level is rectangles: outer walls, a
-// vault room in the top-right with a single door, lobby counters and planters for cover,
-// and divider walls that leave several routes between the vault and the getaway van in
-// the bottom-left. createWorld owns the state; step() advances it by one fixed slice,
-// delegating to the player, guard, camera, alarm and tool modules.
-import { FIELD, GOLD, SCORE, TOOLS } from './config.js';
+// The bank floor and the one simulation step. The level is rectangles: a walled shell,
+// a vault room in the top-right with a single door, lobby counters and planters for
+// cover, and divider walls that leave several routes between the vault and the getaway
+// van in the bottom-left. createWorld owns the state; step() advances it by one fixed
+// slice, delegating to the player, guard, camera, alarm and tool modules.
+import { FIELD, GOLD, PLAYER, SCORE, TOOLS } from './config.js';
 import { pointInRect } from './geometry.js';
 import { updatePlayer } from './player.js';
 import { updateGuards } from './guards.js';
@@ -37,7 +37,7 @@ export const WALLS = [
   { x: 820, y: 360, w: 22, h: 150 },
 ];
 
-/** Lobby counters: solid cover that blocks sight lines. */
+/** Lobby counters: solid cover that breaks sight lines. */
 export const COUNTERS = [
   { x: 300, y: 300, w: 220, h: 34 },
   { x: 620, y: 300, w: 220, h: 34 },
@@ -69,7 +69,7 @@ export const GOLD_SPOTS = [
   { x: 1185, y: 120 },
 ];
 
-/** Patrol loops: lobby, vault door, and the right-hand floor. */
+/** Patrol loops: the lobby, the vault door, and the right-hand floor. */
 export const GUARD_ROUTES = [
   [
     { x: 250, y: 240 },
@@ -167,7 +167,8 @@ export function createWorld(random) {
   /** Settle the score for a successful getaway and mark the run won. */
   function finishWin() {
     const goldPoints = state.player.gold * GOLD.points;
-    const timeBonus = Math.max(0, SCORE.timeBonusCapSeconds - Math.floor(state.time)) * SCORE.timeBonusPerSecond;
+    const timeBonus =
+      Math.max(0, SCORE.timeBonusCapSeconds - Math.floor(state.time)) * SCORE.timeBonusPerSecond;
     const toolBonus = (state.empCharges + state.decoyCharges) * SCORE.unusedToolPoints;
     state.scoreParts = { gold: goldPoints, timeBonus, toolBonus };
     state.score = goldPoints + timeBonus + toolBonus;
@@ -175,7 +176,7 @@ export function createWorld(random) {
   }
 
   /**
-   * Advance the world by `dt` seconds. `input` is {dx, dy, sneak, emp, decoy} where
+   * Advance the world by `dt` seconds. `input` is {dx, dy, sneak, emp, decoy}, where
    * decoy is null or a logical {x, y} aim point. Returns an EVENT_* bitmask.
    */
   function step(dt, input) {
@@ -197,7 +198,7 @@ export function createWorld(random) {
 
     for (let i = 0; i < state.goldBars.length; i += 1) {
       const bar = state.goldBars[i];
-      if (!bar.taken && Math.hypot(bar.x - state.player.x, bar.y - state.player.y) < 14 + GOLD.radius) {
+      if (!bar.taken && Math.hypot(bar.x - state.player.x, bar.y - state.player.y) < PLAYER.radius + GOLD.radius) {
         bar.taken = true;
         state.player.gold += 1;
         events |= EVENT_LOOT;
